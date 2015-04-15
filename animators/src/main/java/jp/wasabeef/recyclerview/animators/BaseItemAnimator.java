@@ -27,6 +27,9 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.internal.ViewHelper;
+import jp.wasabeef.recyclerview.animators.holder.AnimateViewHolder;
+
 public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
 
     private static final boolean DEBUG = false;
@@ -104,7 +107,7 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         }
         // First, remove stuff
         for (ViewHolder holder : mPendingRemovals) {
-            animateRemoveImpl(holder);
+            doAnimateRemove(holder);
         }
         mPendingRemovals.clear();
         // Next, move stuff
@@ -163,7 +166,7 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
             Runnable adder = new Runnable() {
                 public void run() {
                     for (ViewHolder holder : additions) {
-                        animateAddImpl(holder);
+                        doAnimateAdd(holder);
                     }
                     additions.clear();
                     mAdditionsList.remove(additions);
@@ -182,14 +185,55 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         }
     }
 
+    protected void preAnimateRemoveImpl(final RecyclerView.ViewHolder holder) {
+    }
+
+    protected void preAnimateAddImpl(final RecyclerView.ViewHolder holder) {
+    }
+
     protected abstract void animateRemoveImpl(final RecyclerView.ViewHolder holder);
 
     protected abstract void animateAddImpl(final RecyclerView.ViewHolder holder);
 
-    protected void preAnimateRemove(final RecyclerView.ViewHolder holder) {
+    private void preAnimateRemove(final RecyclerView.ViewHolder holder) {
+        ViewHelper.clear(holder.itemView);
+
+        if (holder instanceof AnimateViewHolder) {
+            ((AnimateViewHolder) holder).preAnimateRemoveImpl();
+        } else {
+            preAnimateRemoveImpl(holder);
+        }
     }
 
-    protected void preAnimateAdd(final RecyclerView.ViewHolder holder) {
+    private void preAnimateAdd(final RecyclerView.ViewHolder holder) {
+        ViewHelper.clear(holder.itemView);
+
+        if (holder instanceof AnimateViewHolder) {
+            ((AnimateViewHolder) holder).preAnimateAddImpl();
+        } else {
+            preAnimateAddImpl(holder);
+        }
+    }
+
+    private void doAnimateRemove(final RecyclerView.ViewHolder holder) {
+        if (holder instanceof AnimateViewHolder) {
+            ((AnimateViewHolder) holder)
+                    .animateRemoveImpl(new DefaultRemoveVpaListener(holder));
+        } else {
+            animateRemoveImpl(holder);
+        }
+
+        mRemoveAnimations.add(holder);
+    }
+
+    private void doAnimateAdd(final RecyclerView.ViewHolder holder) {
+        if (holder instanceof AnimateViewHolder) {
+            ((AnimateViewHolder) holder).animateAddImpl(new DefaultAddVpaListener(holder));
+        } else {
+            animateAddImpl(holder);
+        }
+
+        mAddAnimations.add(holder);
     }
 
     @Override
@@ -403,11 +447,11 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         }
         endChangeAnimation(mPendingChanges, item);
         if (mPendingRemovals.remove(item)) {
-            reset(item.itemView);
+            ViewHelper.clear(item.itemView);
             dispatchRemoveFinished(item);
         }
         if (mPendingAdditions.remove(item)) {
-            reset(item.itemView);
+            ViewHelper.clear(item.itemView);
             dispatchAddFinished(item);
         }
 
@@ -437,7 +481,7 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         for (int i = mAdditionsList.size() - 1; i >= 0; i--) {
             ArrayList<ViewHolder> additions = mAdditionsList.get(i);
             if (additions.remove(item)) {
-                reset(item.itemView);
+                ViewHelper.clear(item.itemView);
                 dispatchAddFinished(item);
                 if (additions.isEmpty()) {
                     mAdditionsList.remove(i);
@@ -514,8 +558,7 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         count = mPendingAdditions.size();
         for (int i = count - 1; i >= 0; i--) {
             ViewHolder item = mPendingAdditions.get(i);
-            View view = item.itemView;
-            reset(item.itemView);
+            ViewHelper.clear(item.itemView);
             dispatchAddFinished(item);
             mPendingAdditions.remove(i);
         }
@@ -586,20 +629,6 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
         }
     }
 
-    void reset(View v) {
-        ViewCompat.setAlpha(v, 1);
-        ViewCompat.setScaleY(v, 1);
-        ViewCompat.setScaleX(v, 1);
-        ViewCompat.setTranslationY(v, 0);
-        ViewCompat.setTranslationX(v, 0);
-        ViewCompat.setRotation(v, 0);
-        ViewCompat.setRotationY(v, 0);
-        ViewCompat.setRotationX(v, 0);
-        v.setPivotX(v.getMeasuredWidth() / 2);
-        v.setPivotY(v.getMeasuredHeight() / 2);
-        ViewCompat.animate(v).setInterpolator(null);
-    }
-
     private static class VpaListenerAdapter implements ViewPropertyAnimatorListener {
 
         @Override
@@ -630,12 +659,12 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
 
         @Override
         public void onAnimationCancel(View view) {
-            reset(view);
+            ViewHelper.clear(view);
         }
 
         @Override
         public void onAnimationEnd(View view) {
-            reset(view);
+            ViewHelper.clear(view);
             dispatchAddFinished(mViewHolder);
             mAddAnimations.remove(mViewHolder);
             dispatchFinishedWhenDone();
@@ -657,12 +686,12 @@ public abstract class BaseItemAnimator extends RecyclerView.ItemAnimator {
 
         @Override
         public void onAnimationCancel(View view) {
-            reset(view);
+            ViewHelper.clear(view);
         }
 
         @Override
         public void onAnimationEnd(View view) {
-            reset(view);
+            ViewHelper.clear(view);
             dispatchRemoveFinished(mViewHolder);
             mRemoveAnimations.remove(mViewHolder);
             dispatchFinishedWhenDone();

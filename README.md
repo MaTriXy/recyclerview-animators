@@ -8,11 +8,21 @@ RecyclerView Animators
 [![Download](https://api.bintray.com/packages/wasabeef/maven/recyclerview-animators/images/download.svg)](https://bintray.com/wasabeef/maven/recyclerview-animators/_latestVersion)
 
 RecyclerView Animators is an Android library that allows developers to easily create RecyclerView with animations.
+
 Please feel free to use this.
+
+# Features
+
+* Animate addition and removal of `ItemAnimator`
+* Appearance animations for items in `RecyclerView.Adapter`
 
 # Demo
 
-![](art/demo.gif) ![](art/demo2.gif)  
+### ItemAnimator
+![](art/demo.gif) ![](art/demo2.gif)
+
+### Adapters
+![](art/demo3.gif)
 
 # Samples
 
@@ -20,7 +30,9 @@ Please feel free to use this.
 
 # How do I use it?
 
-## Step 1
+## Setup
+
+Download [the latest JAR](https://search.maven.org/remote_content?g=jp.wasabeef&a=recyclerview-animators&v=LATEST) or grab via Gradle:
 
 #### Gradle
 ```groovy
@@ -29,51 +41,168 @@ repositories {
 }
 
 dependencies {
-    compile 'jp.wasabeef:recyclerview-animators:1.0.0'
+    compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
 }
 ```
 
-## Step 2
+## ItemAnimator
+### Step 1
 
-set RecyclerView ItemAnimator.
+Set RecyclerView ItemAnimator.
 
 ```java
-    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.list);
-    mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
+    recyclerView.setItemAnimator(new SlideInLeftAnimator());
 ```
 
-## Advanced Step 3
+### Advanced Step 2
 
 You can change the durations.
 
 ```java
-    mRecyclerView.getItemAnimator().setAddDuration(1000);
-    mRecyclerView.getItemAnimator().setRemoveDuration(1000);
-    mRecyclerView.getItemAnimator().setMoveDuration(1000);
-    mRecyclerView.getItemAnimator().setChangeDuration(1000);
+    recyclerView.getItemAnimator().setAddDuration(1000);
+    recyclerView.getItemAnimator().setRemoveDuration(1000);
+    recyclerView.getItemAnimator().setMoveDuration(1000);
+    recyclerView.getItemAnimator().setChangeDuration(1000);
 ```
 
-## Animators
+### Advanced Step 3
 
-### Cool
+By extending AnimateViewHolder, you can override preset animation.   
+So, custom animation can be set depeding on view holder.
+
+```java
+   static class MyViewHolder extends AnimateViewHolder {
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void animateRemoveImpl(ViewPropertyAnimatorListener listener) {
+            ViewCompat.animate(itemView)
+                    .translationY(-itemView.getHeight() * 0.3f)
+                    .alpha(0)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+
+        @Override
+        public void preAnimateAddImpl() {
+            ViewCompat.setTranslationY(itemView, -itemView.getHeight() * 0.3f);
+            ViewCompat.setAlpha(itemView, 0);
+        }
+
+        @Override
+        public void animateAddImpl(ViewPropertyAnimatorListener listener) {
+            ViewCompat.animate(itemView)
+                    .translationY(0)
+                    .alpha(1)
+                    .setDuration(300)
+                    .setListener(listener)
+                    .start();
+        }
+    }
+```
+
+### Animators
+
+#### Cool
 `LandingAnimator`
 
-#### Scale
+##### Scale
 `ScaleInAnimator`, `ScaleInTopAnimator`, `ScaleInBottomAnimator`  
 `ScaleInLeftAnimator`, `ScaleInRightAnimator`
 
 
-#### Fade
+##### Fade
 `FadeInAnimator`, `FadeInDownAnimator`, `FadeInUpAnimator`  
 `FadeInLeftAnimator`, `FadeInRightAnimator`
 
-#### Flip
+##### Flip
 `FlipInTopXAnimator`, `FlipInBottomXAnimator`  
 `FlipInLeftYAnimator`, `FlipInRightYAnimator`
 
-#### Slide
+##### Slide
 `SlideInLeftAnimator`, `SlideInRightAnimator`, `OvershootInLeftAnimator`, `OvershootInRightAnimator`  
 `SlideInUpAnimator`, `SlideInDownAnimator`
+
+## RecyclerView.Adapter
+### Step 1
+
+Set RecyclerView ItemAnimator.
+
+```java
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
+    MyAdapter adapter = new MyAdapter();
+    recyclerView.setAdapter(new AlphaInAnimationAdapter(adapter));
+
+```
+
+### Advanced Step 2
+
+Change the durations.
+
+```java
+    MyAdapter adapter = new MyAdapter();
+    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(adapter);
+    alphaAdapter.setDuration(1000);
+    recyclerView.setAdapter(alphaAdapter);
+```
+
+### Advanced Step 3
+
+Change the interpolator.
+
+```java
+    MyAdapter adapter = new MyAdapter();
+    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(adapter);
+    alphaAdapter.setInterpolator(new OvershootInterpolator());
+    recyclerView.setAdapter(alphaAdapter);
+```
+
+### Advanced Step 4
+
+Disable the first scroll mode.
+
+```java
+    MyAdapter adapter = new MyAdapter();
+    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(adapter);
+    scaleAdapter.setFirstOnly(false);
+    recyclerView.setAdapter(alphaAdapter);
+```
+
+### Advanced Step 5
+
+Multiple Animations
+
+```java
+    MyAdapter adapter = new MyAdapter();
+    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(adapter);
+    recyclerView.setAdapter(new ScaleInAnimationAdapter(alphaAdapter));
+```
+
+### Adapters
+
+#### Alpha
+`AlphaInAnimationAdapter`
+
+#### Scale
+`ScaleInAnimationAdapter`
+
+#### Slide
+`SlideInBottomAnimationAdapter`  
+`SlideInRightAnimationAdapter`, `SlideInLeftAnimationAdapter`
+
+Applications using RecyclerView Animators
+---
+
+Please [ping](mailto:dadadada.chop@gmail.com) me or send a pull request if you would like to be added here.
+
+Icon | Application
+------------ | -------------
+<img src="https://lh6.ggpht.com/6zKH_uQY1bxCwXL4DLo_uoFEOXdShi3BgmN6XRHlaJ-oA1svmq6y1PZkmO50nWQn2Lg=w300-rw" width="48" height="48" /> | [Ameba Ownd](https://play.google.com/store/apps/details?id=jp.co.cyberagent.madrid)
 
 Developed By
 -------
@@ -81,7 +210,7 @@ Daichi Furiya (Wasabeef) - <dadadada.chop@gmail.com>
 
 <a href="https://twitter.com/wasabeef_jp">
 <img alt="Follow me on Twitter"
-src="https://raw.githubusercontent.com/wasabeef/wasabeef.github.io/master/art/twitter.png" width="75"/>
+src="https://raw.githubusercontent.com/wasabeef/art/master/twitter.png" width="75"/>
 </a>
 
 Thanks
