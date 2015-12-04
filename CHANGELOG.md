@@ -1,6 +1,51 @@
 Change Log
 ==========
 
+Version 2.1.0 *(2015-11-25)*
+----------------------------
+
+Move the adapters of the package.  
+Added BaseItemAnimator#setInterpolator.  
+
+Version 2.0.2 *(2015-11-24)*
+----------------------------
+
+Added AnimationAdapter#getIemId  
+ Fixed the getItemId() to return the nested adapter item id  
+
+Version 2.0.1 *(2015-11-10)*
+----------------------------
+
+Bug fix registerAdapterDataObserver, unregisterAdapterDataObserver
+
+Version 2.0.0 *(2015-10-16)*
+----------------------------
+
+Support RecyclerView 23.1.0+
+
+**Use 1.3.0 If you are using a 23.0.1 or below.**
+
+Version 1.3.0 *(2015-09-11)*
+----------------------------
+
+Added in ability to pass in interpolators to the four ItemAnimators.
+Thanks to [@craya1982](https://github.com/craya1982)
+
+Version 1.2.3 *(2015-09-07)*
+----------------------------
+
+Update support library.
+
+Version 1.2.2 *(2015-08-19)*
+----------------------------
+
+Add tension in OvershootAnimators.
+
+Version 1.2.1 *(2015-07-07)*
+----------------------------
+
+Update AnimationAdapter to allow grabbing the wrappedAdapter.
+
 Version 1.2.0 *(2015-04-15)*
 ----------------------------
 
