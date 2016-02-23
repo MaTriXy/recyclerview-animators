@@ -41,7 +41,7 @@ Please feel free to use this.
 ```groovy
 dependencies {
   // jCenter
-  compile 'jp.wasabeef:recyclerview-animators:2.1.0'
+  compile 'jp.wasabeef:recyclerview-animators:2.2.0'
 }
 ```
 
@@ -65,12 +65,20 @@ recyclerView.setItemAnimator(new SlideInLeftAnimator());
 
 ```java
 RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
-recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f));
+recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
 ```
 
 ## Step 2
+Please use the following  
+`notifyItemChanged(int)`  
+`notifyItemInserted(int)`  
+`notifyItemRemoved(int)`  
+`notifyItemRangeChanged(int, int)`  
+`notifyItemRangeInserted(int, int)`  
+`notifyItemRangeRemoved(int, int)`  
 
-Please use the `notifyItemRemoved` and `notifyItemInserted`.
+> If you want your animations to work, do not rely on calling `notifyDataSetChanged()`; 
+> as it is the RecyclerView's default behavior, animations are not triggered to start inside this method.
 
 ```java
 public void remove(int position) {
@@ -100,7 +108,7 @@ recyclerView.getItemAnimator().setChangeDuration(1000);
 Change the interpolator.
 
 ```java
-SlideInLeftAnimator animator = new SlideInLeftAnimato();
+SlideInLeftAnimator animator = new SlideInLeftAnimator();
 animator.setInterpolator(new OvershootInterpolator());
 // or recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f));
 recyclerView.setItemAnimator(animator);
@@ -242,6 +250,7 @@ Please [ping](mailto:dadadada.chop@gmail.com) me or send a pull request if you w
 Icon | Application
 ------------ | -------------
 <img src="https://lh6.ggpht.com/6zKH_uQY1bxCwXL4DLo_uoFEOXdShi3BgmN6XRHlaJ-oA1svmq6y1PZkmO50nWQn2Lg=w300-rw" width="48" height="48" /> | [Ameba Ownd](https://play.google.com/store/apps/details?id=jp.co.cyberagent.madrid)
+<img src="http://quitnowapp.com/xtra/QuitNow!-114.png" width="48" height="48" /> | [QuitNow!](https://play.google.com/store/apps/details?id=com.EAGINsoftware.dejaloYa)
 
 Developed By
 -------

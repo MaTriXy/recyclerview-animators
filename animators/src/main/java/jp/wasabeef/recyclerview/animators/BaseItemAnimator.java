@@ -249,11 +249,20 @@ public abstract class BaseItemAnimator extends SimpleItemAnimator {
     return true;
   }
 
+  protected long getRemoveDelay(final RecyclerView.ViewHolder holder) {
+    return Math.abs(holder.getOldPosition() * getRemoveDuration() / 4);
+  }
+
   @Override public boolean animateAdd(final ViewHolder holder) {
     endAnimation(holder);
     preAnimateAdd(holder);
     mPendingAdditions.add(holder);
     return true;
+  }
+
+
+  protected long getAddDelay(final RecyclerView.ViewHolder holder) {
+    return Math.abs(holder.getAdapterPosition() * getAddDuration() / 4);
   }
 
   @Override
@@ -595,7 +604,10 @@ public abstract class BaseItemAnimator extends SimpleItemAnimator {
         View view = item.itemView;
         ViewCompat.setAlpha(view, 1);
         dispatchAddFinished(item);
-        additions.remove(j);
+        //this check prevent exception when removal already happened during finishing animation
+        if (j < additions.size()) {
+          additions.remove(j);
+        }
         if (additions.isEmpty()) {
           mAdditionsList.remove(additions);
         }
