@@ -9,7 +9,7 @@ import android.view.animation.LinearInterpolator;
 import jp.wasabeef.recyclerview.internal.ViewHelper;
 
 /**
- * Copyright (C) 2017 Wasabeef
+ * Copyright (C) 2018 Wasabeef
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,26 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
   @Override public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
     super.unregisterAdapterDataObserver(observer);
     mAdapter.unregisterAdapterDataObserver(observer);
+  }
+
+  @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    super.onAttachedToRecyclerView(recyclerView);
+    mAdapter.onAttachedToRecyclerView(recyclerView);
+  }
+
+  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    super.onDetachedFromRecyclerView(recyclerView);
+    mAdapter.onDetachedFromRecyclerView(recyclerView);
+  }
+
+  @Override public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+    super.onViewAttachedToWindow(holder);
+    mAdapter.onViewAttachedToWindow(holder);
+  }
+
+  @Override public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+    super.onViewDetachedFromWindow(holder);
+    mAdapter.onViewDetachedFromWindow(holder);
   }
 
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
