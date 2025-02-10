@@ -1,6 +1,26 @@
 Change Log
 ==========
 
+Version 4.0.0 *(2020-08-27)*
+----------------------------
+
+Update:
+- Convert from all Java codes to Kotlin 1.3.72
+- The minSdkVersion from 14 to 21
+- The targetSdkVersion from 28 to 30
+- The compileSdkVersion from 28 to 30
+- Update project settings
+  - Disable Jetifier
+  - Add CodeStyle settings
+
+Version 3.0.0 *(2018-11-15)*
+----------------------------
+
+Update:
+- Migrate to AndroidX
+- Remove novoda-bintray-plugin
+- Fix a buf [#161](https://github.com/wasabeef/recyclerview-animators/pull/161)
+
 Version 2.3.0 *(2018-02-07)*
 ----------------------------
 
